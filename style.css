@@ -1,6 +1,6 @@
 /* ============================================================
    OKTAN — clean, grafisk placeholder
-   Levende benzin (WebGL) der flyder GENNEM bogstaverne i OKTAN.
+   Levende benzin (WebGL) + et crisp, solidt OKTAN-wordmark.
    Ingen frameworks. Ét roligt skærmbillede.
    ============================================================ */
 
@@ -18,10 +18,6 @@
 
   --ease: cubic-bezier(.22, 1, .36, 1);
   --pad: clamp(20px, 5vw, 64px);
-
-  /* fælles wordmark-metrik (deles af spacer-h1 og SVG-teksten) */
-  --word-size: clamp(4.6rem, 22vw, 20rem);
-  --word-track: -0.052em;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,44 +48,27 @@ body {
   display: block;
   z-index: 0;
   opacity: 0;
-  animation: fade 1.6s .15s ease forwards;
+  animation: fade 1.6s .1s ease forwards;
   /* CSS-fallback hvis WebGL fejler (canvas forbliver gennemsigtig) */
   background:
-    radial-gradient(120% 90% at 20% 12%, rgba(170,255,0,0.22), transparent 55%),
-    radial-gradient(120% 90% at 82% 80%, rgba(58,123,255,0.16), transparent 55%),
-    radial-gradient(130% 120% at 60% 45%, rgba(24,224,200,0.12), transparent 62%),
+    radial-gradient(120% 90% at 20% 12%, rgba(170,255,0,0.18), transparent 55%),
+    radial-gradient(120% 90% at 82% 80%, rgba(58,123,255,0.14), transparent 55%),
+    radial-gradient(130% 120% at 60% 45%, rgba(24,224,200,0.10), transparent 62%),
     var(--bg);
 }
 
-/* ---------- Lag 1: slør med OKTAN-hul ---------- */
-.veil {
+/* Blød vignet — dæmper kanterne */
+body::after {
+  content: "";
   position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
   z-index: 1;
   pointer-events: none;
-}
-/* mørkt slør → dæmper baggrundens benzin (hullet viser den i fuld styrke) */
-.veil__fill { fill: rgba(6, 7, 10, 0.88); }
-
-.veil text {
-  font-family: var(--sans);
-  font-weight: 700;
-  font-size: var(--word-size);
-  letter-spacing: var(--word-track);
-}
-/* neon-kant der altid definerer ordet, uanset benzinens tilstand */
-.veil__glow {
-  fill: none;
-  stroke: rgba(190, 255, 70, 0.62);
-  stroke-width: 1.5px;
-  opacity: 0;
-  animation: fade 1.3s .5s ease forwards;
-  filter: drop-shadow(0 0 9px rgba(170, 255, 0, 0.45)) drop-shadow(0 0 30px rgba(170, 255, 0, 0.20));
+  background:
+    radial-gradient(100% 95% at 50% 48%, rgba(6,7,10,0.04) 0%, rgba(6,7,10,0.24) 66%, rgba(6,7,10,0.60) 100%);
 }
 
-/* ---------- Filmkorn ---------- */
+/* Filmkorn */
 .grain {
   position: fixed;
   inset: -50%;
@@ -107,7 +86,7 @@ body {
 }
 
 /* ============================================================
-   STAGE (tekst)
+   STAGE
    ============================================================ */
 .stage {
   position: relative;
@@ -119,8 +98,17 @@ body {
   justify-content: center;
   padding: 96px var(--pad);
   text-align: center;
-  pointer-events: none;
 }
+/* fokus-pool: gør centrum mørkere, så det crisp wordmark popper */
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(60% 48% at 50% 50%, rgba(6,7,10,0.80) 0%, rgba(6,7,10,0.40) 44%, rgba(6,7,10,0) 78%);
+}
+.stage > * { position: relative; z-index: 1; }
 
 .eyebrow {
   text-transform: uppercase;
@@ -135,21 +123,40 @@ body {
   animation: rise .9s .15s var(--ease) forwards;
 }
 
-/* Gennemsigtig wordmark: reserverer den præcise plads; SVG-laget viser benzinen */
+/* Crisp, solidt wordmark */
 .word {
+  position: relative;
   font-weight: 700;
-  font-size: var(--word-size);
-  line-height: 0.8;
-  letter-spacing: var(--word-track);
+  font-size: clamp(4.8rem, 23vw, 21rem);
+  line-height: 0.82;
+  letter-spacing: -0.05em;
   color: transparent;
-  user-select: none;
-  margin: clamp(2px, 1vw, 10px) 0;
+  background: linear-gradient(176deg, #ffffff 0%, #ecffce 38%, #b6ff4a 74%, #93e024 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* lille, skarp skygge til kant-løft + blødt neon-skær */
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.45)) drop-shadow(0 14px 52px rgba(170,255,0,0.16));
+  opacity: 0;
+  animation: rise 1.1s .22s var(--ease) forwards;
+}
+/* ét iriserende sweep ved load (ingen gentagelse) */
+.word::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background: linear-gradient(100deg, transparent 34%, #18e0c8 44%, #ffffff 50%, #b85cff 56%, transparent 66%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  mix-blend-mode: screen;
+  animation: shine 2.6s 1.5s var(--ease) 1 both;
 }
 
 .tagline {
   margin-top: clamp(22px, 4vw, 36px);
   max-width: 24ch;
-  color: rgba(238, 243, 236, 0.82);
+  color: rgba(238, 243, 236, 0.84);
   font-weight: 400;
   font-size: clamp(1rem, 2.3vw, 1.45rem);
   letter-spacing: 0.005em;
@@ -180,6 +187,11 @@ body {
    ============================================================ */
 @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 @keyframes fade { to { opacity: 1; } }
+@keyframes shine {
+  0%   { background-position: 200% 0; opacity: 0; }
+  18%  { opacity: 1; }
+  100% { background-position: -70% 0; opacity: 0; }
+}
 
 /* ============================================================
    REDUCED MOTION
@@ -190,6 +202,6 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: .001ms !important;
   }
-  #fuel, .veil__glow, .eyebrow, .tagline, .footer { opacity: 1; transform: none; }
+  #fuel, .eyebrow, .word, .tagline, .footer { opacity: 1; transform: none; }
   .grain { display: none; }
 }

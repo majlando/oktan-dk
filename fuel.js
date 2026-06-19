@@ -84,33 +84,33 @@
     "  float mh = exp(-md * 1.7) * u_mamt;",
 
     // benzin-palet: domineret af neongrøn, dyb og rolig
-    "  vec3 neon = vec3(0.64, 1.0, 0.06);",
-    "  float h = smoothstep(0.08, 1.0, f);",
+    "  vec3 neon = vec3(0.62, 1.0, 0.05);",
+    "  float h = smoothstep(0.10, 1.0, f);",
 
-    // grøn-lænet bund (så bogstaverne aldrig går helt mørke)
-    "  vec3 col = vec3(0.02, 0.045, 0.018);",
-    // levende grønt korpus
-    "  col += vec3(0.09, 0.24, 0.025) * h * 1.45;",
+    // dyb base
+    "  vec3 col = vec3(0.012, 0.017, 0.014);",
+    // grønt korpus
+    "  col += vec3(0.055, 0.15, 0.02) * h * 1.06;",
     // smaragd/teal i mellemtonerne
-    "  col += vec3(0.0, 0.13, 0.10) * smoothstep(0.28, 0.78, f) * (0.40 + 0.60 * q.x);",
+    "  col += vec3(0.0, 0.09, 0.075) * smoothstep(0.30, 0.78, f) * (0.40 + 0.60 * q.x);",
     // neon-højlys i de lyseste partier
-    "  col += neon * smoothstep(0.72, 1.04, f) * 0.62;",
+    "  col += neon * smoothstep(0.82, 1.05, f) * 0.34;",
 
     // tynde, iriserende oliefilm-striber
     "  float band = sin((f * 7.0 + length(q) * 3.0) * 3.14159);",
-    "  float sheen = smoothstep(0.88, 1.0, abs(band));",
-    "  vec3 irid = pal(f * 1.4 + 0.07 * u_time, vec3(0.5), vec3(0.45), vec3(1.0), vec3(0.0, 0.33, 0.66));",
-    "  col += irid * sheen * 0.20;",
+    "  float sheen = smoothstep(0.90, 1.0, abs(band));",
+    "  vec3 irid = pal(f * 1.4 + 0.07 * u_time, vec3(0.5), vec3(0.44), vec3(1.0), vec3(0.0, 0.33, 0.66));",
+    "  col += irid * sheen * 0.15;",
 
     // mus-varme
-    "  col += neon * mh * 0.10;",
+    "  col += neon * mh * 0.09;",
 
     // tonemap + gamma
-    "  col = col / (col + 0.72);",
-    "  col = pow(max(col, 0.0), vec3(0.95));",
+    "  col = col / (col + 0.80);",
+    "  col = pow(max(col, 0.0), vec3(0.97));",
 
     // blød vignet
-    "  float vig = 1.0 - 0.80 * pow(length(uv - 0.5) * 1.10, 2.2);",
+    "  float vig = 1.0 - 0.85 * pow(length(uv - 0.5) * 1.12, 2.2);",
     "  col *= clamp(vig, 0.0, 1.0);",
 
     // fint filmkorn

@@ -31,26 +31,13 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Levende benzin (WebGL). Falder tilbage til CSS-gradient. -->
+  <!-- Levende, iriserende benzin (WebGL). Falder tilbage til CSS-gradient. -->
   <canvas id="fuel" aria-hidden="true"></canvas>
-
-  <!-- Slør: dæmper benzinen overalt undtagen GENNEM bogstaverne i OKTAN -->
-  <svg class="veil" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <mask id="okhole" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
-        <rect x="0" y="0" width="100%" height="100%" fill="#fff" />
-        <text id="okCut" x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="#000">OKTAN</text>
-      </mask>
-    </defs>
-    <rect class="veil__fill" x="0" y="0" width="100%" height="100%" mask="url(#okhole)" />
-    <text id="okGlow" class="veil__glow" x="50%" y="50%" text-anchor="middle" dominant-baseline="central">OKTAN</text>
-  </svg>
-
   <div class="grain" aria-hidden="true"></div>
 
   <main class="stage">
     <p class="eyebrow">Digitalt&nbsp;bureau</p>
-    <h1 class="word">OKTAN</h1>
+    <h1 class="word" data-text="OKTAN">OKTAN</h1>
     <p class="tagline">Brændstof til din digitale&nbsp;vækst.</p>
   </main>
 
