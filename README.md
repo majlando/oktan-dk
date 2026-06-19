@@ -16,8 +16,10 @@ står knivskarpt — flankeret af en kicker og en tagline.
 | `style.css` | Tema, layout, wordmark, fokus-pool, animationer + reduced-motion |
 | `fuel.js` | WebGL-baggrund (flydende, iriserende benzin) — CSS-gradient som fallback |
 | `app.js` | Sætter årstallet i footeren (resten er ren CSS + WebGL) |
+| `404.html` | Brandet 404-side (samme shader + wordmark) |
 | `favicon.svg` | Browserikon (grøn benzindråbe) |
-| `og.png` | Delebillede til sociale medier (1200×630) |
+| `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `site.webmanifest` | App-ikoner + web app manifest (installbar) |
+| `og.jpg` | Delebillede til sociale medier (1200×630, ~48 KB) |
 | `robots.txt` / `sitemap.xml` | SEO |
 | `_headers` | Sikkerheds-/cache-headers (Cloudflare Pages) |
 
@@ -45,5 +47,5 @@ Eller manuelt: **Upload assets** og træk hele mappens indhold ind.
 - **Wordmark:** gradient og størrelse styres af `.word` i `style.css`.
 - **Læsbarhed:** `.stage::before` er den mørke fokus-pool bag teksten (mørkere = mere kontrast).
 - **Benzinens udtryk:** farver, `SCALE`, hastighed (`tm`) og `smoothstep`-tærskler i `fuel.js`.
-- **Delebillede:** `og.png` (1200×630) — gendan hvis teksten ændres.
+- **Delebillede:** `og.jpg` (1200×630) — gendan hvis udtrykket ændres.
 - **Tilgængelighed:** alt respekterer `prefers-reduced-motion`, og WebGL har en CSS-gradient-fallback.

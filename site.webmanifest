@@ -1,0 +1,14 @@
+{
+  "name": "Oktan",
+  "short_name": "Oktan",
+  "description": "Oktan er et high-octane digitalt bureau — brændstof til din digitale vækst.",
+  "lang": "da",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06070a",
+  "theme_color": "#06070a",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

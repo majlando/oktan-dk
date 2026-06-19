@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Oktan</title>
+  <meta name="description" content="Siden findes ikke." />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#06070a" />
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* 404-specifik: tilbage-knap (genbruger temaets tokens + rise-animation) */
+    .back {
+      display: inline-block;
+      margin-top: clamp(28px, 4vw, 40px);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid rgba(182, 255, 58, 0.45);
+      border-radius: 999px;
+      padding: 11px 20px;
+      transition: background-color .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
+      opacity: 0;
+      animation: rise 1s .5s var(--ease) forwards;
+    }
+    .back:hover,
+    .back:focus-visible { background: var(--accent); color: #06210a; border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <canvas id="fuel" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+
+  <main class="stage">
+    <p class="eyebrow">Fejl&nbsp;404</p>
+    <h1 class="word" data-text="404">404</h1>
+    <p class="tagline">Siden løb tør for brændstof.</p>
+    <a class="back" href="/">← Tilbage til forsiden</a>
+  </main>
+
+  <footer class="footer"><span id="year">2026</span>&nbsp;·&nbsp;oktan.dk</footer>
+
+  <script src="fuel.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>

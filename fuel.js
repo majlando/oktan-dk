@@ -90,17 +90,23 @@
     // dyb base
     "  vec3 col = vec3(0.012, 0.017, 0.014);",
     // grønt korpus
-    "  col += vec3(0.055, 0.15, 0.02) * h * 1.06;",
+    "  col += vec3(0.055, 0.15, 0.02) * h * 1.16;",
     // smaragd/teal i mellemtonerne
     "  col += vec3(0.0, 0.09, 0.075) * smoothstep(0.30, 0.78, f) * (0.40 + 0.60 * q.x);",
     // neon-højlys i de lyseste partier
     "  col += neon * smoothstep(0.82, 1.05, f) * 0.34;",
+    // strammere, lysere neon-kerne i de absolut lyseste partier
+    "  col += neon * smoothstep(0.94, 1.12, f) * 0.22;",
 
-    // tynde, iriserende oliefilm-striber
-    "  float band = sin((f * 7.0 + length(q) * 3.0) * 3.14159);",
-    "  float sheen = smoothstep(0.90, 1.0, abs(band));",
-    "  vec3 irid = pal(f * 1.4 + 0.07 * u_time, vec3(0.5), vec3(0.44), vec3(1.0), vec3(0.0, 0.33, 0.66));",
-    "  col += irid * sheen * 0.15;",
+    // thin-film iridescens — følger væskens flow; to frekvenser giver tynde,
+    // skiftende oliefilm-striber, der skimrer langsomt.
+    "  float filmT = f * 6.0 + length(q) * 2.0 + length(r) * 1.4;",
+    "  float band  = 0.5 + 0.5 * sin(filmT * 3.14159 + u_time * 0.22);",
+    "  float band2 = 0.5 + 0.5 * sin(filmT * 6.30     - u_time * 0.16);",
+    "  float sheen = pow(band, 2.5) * 0.65 + pow(band2, 4.0) * 0.35;",
+    "  sheen *= smoothstep(0.28, 0.95, f);",  // bredt over mellemtoner + kamme
+    "  vec3 irid = pal(filmT * 0.20 + 0.05 * u_time, vec3(0.5), vec3(0.5), vec3(1.0), vec3(0.0, 0.33, 0.66));",
+    "  col += irid * sheen * 0.45;",
 
     // mus-varme
     "  col += neon * mh * 0.09;",
@@ -110,7 +116,7 @@
     "  col = pow(max(col, 0.0), vec3(0.97));",
 
     // blød vignet
-    "  float vig = 1.0 - 0.85 * pow(length(uv - 0.5) * 1.12, 2.2);",
+    "  float vig = 1.0 - 0.70 * pow(length(uv - 0.5) * 1.12, 2.2);",
     "  col *= clamp(vig, 0.0, 1.0);",
 
     // fint filmkorn
@@ -131,29 +137,38 @@
     return s;
   }
 
-  var vs = compile(gl.VERTEX_SHADER, VERT);
-  var fs = compile(gl.FRAGMENT_SHADER, FRAG);
-  if (!vs || !fs) return; // fald tilbage til CSS
+  /* ---------- GL-opsætning (kan køres igen ved context-restore) ---------- */
+  var prog = null, buf = null, aPos = -1;
+  var uRes, uTime, uMouse, uMamt;
 
-  var prog = gl.createProgram();
-  gl.attachShader(prog, vs);
-  gl.attachShader(prog, fs);
-  gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
-  gl.useProgram(prog);
+  function setup() {
+    var vs = compile(gl.VERTEX_SHADER, VERT);
+    var fs = compile(gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return false;
 
-  // Fuldskærms-trekant
-  var buf = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  var aPos = gl.getAttribLocation(prog, "a_pos");
-  gl.enableVertexAttribArray(aPos);
-  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+    prog = gl.createProgram();
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return false;
+    gl.useProgram(prog);
 
-  var uRes = gl.getUniformLocation(prog, "u_res");
-  var uTime = gl.getUniformLocation(prog, "u_time");
-  var uMouse = gl.getUniformLocation(prog, "u_mouse");
-  var uMamt = gl.getUniformLocation(prog, "u_mamt");
+    // Fuldskærms-trekant
+    buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    aPos = gl.getAttribLocation(prog, "a_pos");
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    uRes = gl.getUniformLocation(prog, "u_res");
+    uTime = gl.getUniformLocation(prog, "u_time");
+    uMouse = gl.getUniformLocation(prog, "u_mouse");
+    uMamt = gl.getUniformLocation(prog, "u_mamt");
+    return true;
+  }
+
+  if (!setup()) return; // fald tilbage til CSS
 
   /* ---------- State ---------- */
   var W = 0, H = 0;
@@ -161,6 +176,9 @@
   var SCALE = Math.min(window.innerWidth, window.innerHeight) < 720 ? 0.45 : 0.6;
   var mouse = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5, amt: 0, tamt: 0 };
   var t0 = 0, raf = null, running = false;
+  // Loft på framerate: animationen er bevidst langsom, så ~40 fps ser identisk ud,
+  // men sparer markant GPU/batteri på 60-144 Hz-skærme.
+  var FPS = 40, frameInterval = 1000 / FPS, lastDraw = 0;
 
   function resize() {
     W = window.innerWidth;
@@ -173,10 +191,26 @@
     }
     gl.viewport(0, 0, bw, bh);
     gl.uniform2f(uRes, bw, bh);
+    // reduced-motion: canvas ryddes ved resize → gentegn det rolige billede.
+    if (reduce) drawStatic();
+  }
+
+  // Ét roligt, repræsentativt billede (reduced-motion + opstart).
+  function drawStatic() {
+    gl.uniform1f(uTime, 12.0);
+    gl.uniform2f(uMouse, 0.5, 0.5);
+    gl.uniform1f(uMamt, 0.0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
   function frame(now) {
+    raf = requestAnimationFrame(frame);
     if (!t0) t0 = now;
+
+    // throttle til FPS-loftet
+    if (now - lastDraw < frameInterval) return;
+    lastDraw = now;
+
     var time = (now - t0) * 0.001;
 
     // blød forfølgelse af mus
@@ -188,14 +222,13 @@
     gl.uniform2f(uMouse, mouse.x, mouse.y);
     gl.uniform1f(uMamt, mouse.amt);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-    raf = requestAnimationFrame(frame);
   }
 
   function start() {
     if (running) return;
     running = true;
     t0 = 0;
+    lastDraw = 0;
     raf = requestAnimationFrame(frame);
   }
   function stop() {
@@ -222,18 +255,18 @@
     else if (!reduce) start();
   });
 
-  // Genskab ved context-loss
+  // Context-loss: stop og afvent restore. Context-restore: byg GL op igen og fortsæt —
+  // uden dette ville baggrunden blive sort permanent efter en GPU-/driver-reset.
   canvas.addEventListener("webglcontextlost", function (e) { e.preventDefault(); stop(); }, false);
+  canvas.addEventListener("webglcontextrestored", function () {
+    if (!setup()) return;
+    resize();              // gen-sætter viewport/uRes (+ roligt billede hvis reduced)
+    if (!reduce) start();
+  }, false);
 
   resize();
 
-  if (reduce) {
-    // Tegn ét roligt billede og bliv stående.
-    gl.uniform1f(uTime, 12.0);
-    gl.uniform2f(uMouse, 0.5, 0.5);
-    gl.uniform1f(uMamt, 0.0);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-  } else {
+  if (!reduce) {
     start();
     // Spar GPU: kør kun mens scenen er synlig
     var stage = document.querySelector(".stage");
