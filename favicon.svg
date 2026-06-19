@@ -9,5 +9,4 @@
   <!-- væskedråbe -->
   <path d="M32 12 C32 12 46 30 46 40 a14 14 0 0 1 -28 0 C18 30 32 12 32 12 Z"
         fill="url(#drop)"/>
-  <ellipse cx="27" cy="36" rx="4" ry="6" fill="#ffffff" opacity="0.45"/>
 </svg>
