@@ -1,0 +1,12 @@
+# Dev-artefakter (screenshots, headless-profiler, scripts)
+.shots/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+
+# Logs / deps (bruges ikke, men en sikkerhed)
+node_modules/
+*.log

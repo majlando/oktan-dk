@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#07080a"/>
+  <defs>
+    <linearGradient id="drop" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d4ff5a"/>
+      <stop offset="1" stop-color="#7ac400"/>
+    </linearGradient>
+  </defs>
+  <!-- væskedråbe -->
+  <path d="M32 12 C32 12 46 30 46 40 a14 14 0 0 1 -28 0 C18 30 32 12 32 12 Z"
+        fill="url(#drop)"/>
+  <ellipse cx="27" cy="36" rx="4" ry="6" fill="#ffffff" opacity="0.45"/>
+</svg>
