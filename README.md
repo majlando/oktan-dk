@@ -4,19 +4,21 @@ En clean, grafisk **placeholder** i ren HTML/CSS/JS. Ingen frameworks, ingen
 build, ingen afhængigheder. Ét roligt skærmbillede.
 
 Signaturen er en fuldskærms-**benzin-shader** (WebGL): domæne-warpet støj giver
-en flydende, iriserende væske domineret af neongrøn. Ovenpå sidder et **crisp,
-solidt `OKTAN`-wordmark** (hvid→neongrøn gradient) på en mørk fokus-pool, så det
-står knivskarpt — flankeret af en kicker og en tagline.
+en flydende, iriserende væske domineret af neongrøn. Ovenpå sidder **`OKTAN`-
+logoet** — et vektoriseret, font-uafhængigt wordmark (`logo.svg`, hvid→neongrøn
+gradient) på en mørk fokus-pool, så det står knivskarpt — flankeret af en kicker
+og en tagline.
 
 ## Filer
 
 | Fil | Formål |
 |-----|--------|
 | `index.html` | Struktur, indhold og meta (SEO + Open Graph) |
-| `style.css` | Tema, layout, wordmark, fokus-pool, animationer + reduced-motion |
+| `style.css` | Tema, layout, logo + wordmark, fokus-pool, animationer + reduced-motion |
 | `fuel.js` | WebGL-baggrund (flydende, iriserende benzin) — CSS-gradient som fallback |
 | `app.js` | Sætter årstallet i footeren (resten er ren CSS + WebGL) |
-| `404.html` | Brandet 404-side (samme shader + wordmark) |
+| `logo.svg` | Vektoriseret OKTAN-logo (font-uafhængigt; gradient + iriserende sweep) |
+| `404.html` | Brandet 404-side (samme shader + tekst-wordmark) |
 | `favicon.svg` | Browserikon (grøn benzindråbe) |
 | `apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `site.webmanifest` | App-ikoner + web app manifest (installbar) |
 | `og.jpg` | Delebillede til sociale medier (1200×630, ~48 KB) |
@@ -43,8 +45,8 @@ Eller manuelt: **Upload assets** og træk hele mappens indhold ind.
 
 ## Ret indhold
 
-- **Tekst:** kicker, `OKTAN` og tagline ligger i `index.html`.
-- **Wordmark:** gradient og størrelse styres af `.word` i `style.css`.
+- **Tekst:** kicker og tagline ligger i `index.html`; selve `OKTAN` er logoet `logo.svg`.
+- **Logo:** `logo.svg` er det vektoriserede wordmark (font-uafhængigt, gradient + sweep); størrelse styres af `.logo` i `style.css`.
 - **Læsbarhed:** `.stage::before` er den mørke fokus-pool bag teksten (mørkere = mere kontrast).
 - **Benzinens udtryk:** farver, `SCALE`, hastighed (`tm`) og `smoothstep`-tærskler i `fuel.js`.
 - **Delebillede:** `og.jpg` (1200×630) — gendan hvis udtrykket ændres.
